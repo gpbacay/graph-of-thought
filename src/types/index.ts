@@ -181,7 +181,7 @@ export interface ToTConfig {
   debug?: boolean;
   /** Cache configuration */
   cache?: {
-    enabled: boolean;
+    enabled?: boolean;
     ttlMs?: number;
   };
 }

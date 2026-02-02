@@ -276,10 +276,6 @@ Contributions welcome! This is an open-source project.
 
 MIT License - Use it however you want!
 
-## Credits
-
-Inspired by [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex).
-
 ---
 
 **No API keys. No vector databases. No external services. Just install and use.**
