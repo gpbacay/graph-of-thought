@@ -1,4 +1,4 @@
-# Graph-of-Thought (GoT) & Tree-of-Thought (ToT)
+# Graph-of-Thought (GoT)
 
 **Advanced Document Indexing and Retrieval with Graph-Based Intelligence**
 
