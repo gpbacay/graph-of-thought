@@ -20,16 +20,21 @@
  * ```
  */
 
-// Main class
-export { TreeOfThought, ExpertKnowledgePresets } from './TreeOfThought';
+// Main classes
+export { GraphOfThought } from './GraphOfThought';
+export { TreeOfThought, ExpertKnowledgePresets } from './TreeOfThought'; // Legacy
 
 // Core modules (all work standalone)
 export { TreeGenerator } from './core/TreeGenerator';
 export { SimpleSearch } from './core/SimpleSearch';
 export { DocumentParser } from './core/DocumentParser';
+export { GraphIndexer } from './core/GraphIndexer';
 
 // LLM-enhanced search (optional - requires LLM provider)
 export { TreeSearch } from './core/TreeSearch';
+
+// Algorithms
+export { BMSSPAlgorithm } from './algorithms/BMSSP';
 
 // Optional providers (only import if you want LLM-enhanced search)
 export {
@@ -48,6 +53,12 @@ export type {
   DocumentNode,
   TreeIndex,
 
+  // Graph types (GoT)
+  GraphNode,
+  GraphEdge,
+  GraphIndex,
+  PathResult,
+
   // Search types
   TreeSearchResult,
   RetrievedContent,
@@ -58,6 +69,9 @@ export type {
   TreeGeneratorConfig,
   TreeSearchConfig,
   ToTConfig,
+  GraphIndexerConfig,
+  GoTConfig,
+  BMSSPOptions,
 
   // LLM types (optional)
   LLMProvider,

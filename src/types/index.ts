@@ -186,6 +186,28 @@ export interface ToTConfig {
   };
 }
 
+/**
+ * Main configuration for Graph-of-Thought
+ */
+export interface GoTConfig {
+  /** Graph indexer configuration */
+  indexer?: GraphIndexerConfig;
+  /** Enable debug logging */
+  debug?: boolean;
+  /** Cache configuration */
+  cache?: {
+    enabled?: boolean;
+    ttlMs?: number;
+  };
+  /** Hybrid mode configuration */
+  hybridMode?: {
+    /** Threshold for switching to graph mode (0-1) */
+    autoSwitchThreshold?: number;
+    /** Fallback to tree mode for simple documents */
+    fallbackToTree?: boolean;
+  };
+}
+
 // ============================================================================
 // LLM Provider Types
 // ============================================================================
@@ -275,15 +297,130 @@ export interface ParseOptions {
 }
 
 // ============================================================================
+// Graph Types (GoT)
+// ============================================================================
+
+/**
+ * Node in a graph-based document index
+ */
+export interface GraphNode {
+  /** Unique identifier for this node */
+  nodeId: string;
+  /** Title or heading of this section */
+  title: string;
+  /** Full content of this node */
+  content: string;
+  /** Summary of the content */
+  summary: string;
+  /** Type of node */
+  type: 'document' | 'section' | 'paragraph' | 'reference';
+  /** Position in original document */
+  position: {
+    start: number;
+    end: number;
+  };
+  /** Optional metadata */
+  metadata?: {
+    level?: number;
+    keywords?: string[];
+    centrality?: number;
+    [key: string]: unknown;
+  };
+  /** Relevance score for search results */
+  relevanceScore?: number;
+}
+
+/**
+ * Edge representing relationship between nodes
+ */
+export interface GraphEdge {
+  /** Source node ID */
+  from: string;
+  /** Target node ID */
+  to: string;
+  /** Weight of the relationship (0-1) */
+  weight: number;
+  /** Type of relationship */
+  type: 'parent-child' | 'semantic' | 'reference' | 'cross-link';
+  /** Optional metadata */
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Graph-based document index
+ */
+export interface GraphIndex {
+  /** Title of the indexed document */
+  title: string;
+  /** Optional description */
+  description?: string;
+  /** Nodes in the graph */
+  nodes: GraphNode[];
+  /** Edges representing relationships */
+  edges: GraphEdge[];
+  /** Metadata about the index */
+  metadata: {
+    createdAt: string;
+    version: string;
+    nodeCount: number;
+    edgeCount: number;
+    indexType: 'graph';
+    [key: string]: unknown;
+  };
+}
+
+/**
+ * Configuration for graph indexing
+ */
+export interface GraphIndexerConfig {
+  /** Maximum search depth */
+  maxDepth?: number;
+  /** Maximum results to return */
+  maxResults?: number;
+  /** Enable cross-references between sections */
+  enableCrossReferences?: boolean;
+  /** Pre-compute relationship metrics */
+  precomputeRelationships?: boolean;
+  /** Minimum edge weight to consider */
+  minEdgeWeight?: number;
+}
+
+/**
+ * Options for BMSSP algorithm
+ */
+export interface BMSSPOptions {
+  /** Maximum search depth */
+  maxDepth?: number;
+  /** Maximum number of results */
+  maxResults?: number;
+  /** Minimum edge weight threshold */
+  minEdgeWeight?: number;
+}
+
+/**
+ * Result from path finding algorithm
+ */
+export interface PathResult {
+  /** Node IDs in the path */
+  nodeIds: string[];
+  /** Total distance/weight of the path */
+  distance: number;
+  /** Overall path score (0-1) */
+  pathScore: number;
+  /** Human-readable reasoning */
+  reasoning: string;
+}
+
+// ============================================================================
 // Event Types
 // ============================================================================
 
 /**
- * Events emitted during tree operations
+ * Events emitted during tree/graph operations
  */
-export type ToTEventType =
-  | 'tree:building'
-  | 'tree:built'
+export type GoTEventType =
+  | 'index:building'
+  | 'index:built'
   | 'search:started'
   | 'search:completed'
   | 'retrieval:started'
@@ -293,8 +430,8 @@ export type ToTEventType =
 /**
  * Event payload
  */
-export interface ToTEvent {
-  type: ToTEventType;
+export interface GoTEvent {
+  type: GoTEventType;
   timestamp: string;
   data?: unknown;
 }
@@ -302,4 +439,4 @@ export interface ToTEvent {
 /**
  * Event handler function
  */
-export type ToTEventHandler = (event: ToTEvent) => void;
+export type GoTEventHandler = (event: GoTEvent) => void;
