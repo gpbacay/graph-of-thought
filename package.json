@@ -1,7 +1,7 @@
 {
   "name": "graph-of-thought",
   "version": "1.0.1",
-  "description": "Advanced Graph-of-Thought implementation with BMSSP algorithm for vectorless document indexing and retrieval. Works standalone without API keys or external services. Includes backward-compatible Tree-of-Thought functionality.",
+  "description": "Advanced Graph-of-Thought implementation with BMSSP algorithm for vectorless document indexing and retrieval. Features selective node activation for efficient processing. Works standalone without API keys or external services. Includes backward-compatible Tree-of-Thought functionality.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

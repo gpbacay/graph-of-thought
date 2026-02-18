@@ -5,6 +5,7 @@
 
 import { GraphNode, GraphEdge, GraphIndex, GraphIndexerConfig, PathResult } from '../types';
 import { BMSSPAlgorithm } from '../algorithms/BMSSP';
+import { OptimizedBMSSPAlgorithm } from '../algorithms/OptimizedBMSSP'; // New optimized version
 
 const DEFAULT_CONFIG: Required<GraphIndexerConfig> = {
   maxDepth: 3,
@@ -17,10 +18,21 @@ const DEFAULT_CONFIG: Required<GraphIndexerConfig> = {
 export class GraphIndexer {
   private config: Required<GraphIndexerConfig>;
   private bmssp: BMSSPAlgorithm;
+  private optimizedBmssp: OptimizedBMSSPAlgorithm; // New optimized version
+  private useOptimized: boolean; // Flag to toggle between algorithms
 
   constructor(config: GraphIndexerConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.bmssp = new BMSSPAlgorithm();
+    this.optimizedBmssp = new OptimizedBMSSPAlgorithm();
+    this.useOptimized = true; // Default to optimized version
+  }
+
+  /**
+   * Toggle between optimized and standard BMSSP algorithms
+   */
+  public setOptimizationMode(useOptimized: boolean): void {
+    this.useOptimized = useOptimized;
   }
 
   /**
@@ -55,12 +67,12 @@ export class GraphIndexer {
   }
 
   /**
-   * Find relevant paths using BMSSP algorithm
+   * Find relevant paths using BMSSP algorithm with selective activation
    */
   public async search(
     graph: GraphIndex,
     query: string
-  ): Promise<{ paths: PathResult[], nodeList: string[] }> {
+  ): Promise<{ paths: PathResult[], nodeList: string[], activatedNodeCount?: number }> {
     // Find all query-relevant source nodes
     const sourceNodes = this.findQuerySources(query, graph.nodes);
     
@@ -68,28 +80,44 @@ export class GraphIndexer {
       return { paths: [], nodeList: [] };
     }
 
-    // Use BMSSP for efficient multi-source search
-    const paths = await this.bmssp.findBoundedPaths(
-      graph,
-      sourceNodes.map(node => node.nodeId),
-      {
-        maxDepth: this.config.maxDepth,
-        maxResults: this.config.maxResults,
-        minEdgeWeight: this.config.minEdgeWeight
-      }
-    );
+    let result;
+    if (this.useOptimized) {
+      // Use optimized BMSSP with selective activation
+      result = await this.optimizedBmssp.findBoundedPaths(
+        graph,
+        sourceNodes.map(node => node.nodeId),
+        {
+          maxDepth: this.config.maxDepth,
+          maxResults: this.config.maxResults,
+          minEdgeWeight: this.config.minEdgeWeight
+        }
+      );
+    } else {
+      // Use standard BMSSP
+      const paths = await this.bmssp.findBoundedPaths(
+        graph,
+        sourceNodes.map(node => node.nodeId),
+        {
+          maxDepth: this.config.maxDepth,
+          maxResults: this.config.maxResults,
+          minEdgeWeight: this.config.minEdgeWeight
+        }
+      );
+      result = { paths, activatedNodeCount: undefined };
+    }
 
-    const nodeList = paths.flatMap(path => path.nodeIds);
+    const nodeList = result.paths.flatMap(path => path.nodeIds);
     const uniqueNodeIds = [...new Set(nodeList)];
 
     return {
-      paths,
-      nodeList: uniqueNodeIds
+      paths: result.paths,
+      nodeList: uniqueNodeIds,
+      activatedNodeCount: result.activatedNodeCount
     };
   }
 
   /**
-   * Complete retrieval pipeline
+   * Complete retrieval pipeline with activation statistics
    */
   public async retrieve(
     graph: GraphIndex,
@@ -97,8 +125,9 @@ export class GraphIndexer {
   ): Promise<{
     context: string;
     contents: any[];
-    searchResult: { paths: PathResult[], nodeList: string[] };
+    searchResult: { paths: PathResult[], nodeList: string[], activatedNodeCount?: number };
     totalTimeMs: number;
+    activationStats?: { activated: number; total: number; rate: string };
   }> {
     const startTime = Date.now();
 
@@ -111,11 +140,24 @@ export class GraphIndexer {
     // Format context
     const context = this.formatContext(contents);
 
+    // Calculate activation statistics if available
+    let activationStats;
+    if (searchResult.activatedNodeCount !== undefined) {
+      const totalNodes = graph.nodes.length;
+      const rate = ((searchResult.activatedNodeCount / totalNodes) * 100).toFixed(1);
+      activationStats = {
+        activated: searchResult.activatedNodeCount,
+        total: totalNodes,
+        rate: `${rate}%`
+      };
+    }
+
     return {
       context,
       contents,
       searchResult,
-      totalTimeMs: Date.now() - startTime
+      totalTimeMs: Date.now() - startTime,
+      activationStats
     };
   }
 

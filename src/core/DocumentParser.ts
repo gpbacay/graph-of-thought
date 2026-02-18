@@ -62,9 +62,10 @@ export class DocumentParser {
     const docTitle = title || path.basename(filePath, '.pdf');
 
     try {
-      const pdfParse = await import('@cyber2024/pdf-parse-fixed');
+      const pdfParseModule = await import('@cyber2024/pdf-parse-fixed');
+      const pdfParse = pdfParseModule.default;
       const buffer = fs.readFileSync(filePath);
-      const pdfData = await pdfParse.default(buffer);
+      const pdfData = await pdfParse(buffer);
 
       const cleanContent = this.cleanPdfText(pdfData.text);
       const tree = await this.generator.generateTree(cleanContent, docTitle, description);
@@ -90,8 +91,9 @@ export class DocumentParser {
     description?: string
   ): Promise<TreeIndex> {
     try {
-      const pdfParse = await import('@cyber2024/pdf-parse-fixed');
-      const pdfData = await pdfParse.default(buffer);
+      const pdfParseModule = await import('@cyber2024/pdf-parse-fixed');
+      const pdfParse = pdfParseModule.default;
+      const pdfData = await pdfParse(buffer);
 
       const cleanContent = this.cleanPdfText(pdfData.text);
       const tree = await this.generator.generateTree(cleanContent, title, description);

@@ -71,7 +71,7 @@ const DEFAULT_CONFIG: ToTConfig = {
  */
 export class TreeOfThought {
   private generator: TreeGenerator;
-  private simpleSearch: SimpleSearch;
+  private keywordSearch: SimpleSearch;
   private llmSearch: TreeSearch | null = null;
   private parser: DocumentParser;
   private config: ToTConfig;
@@ -83,7 +83,7 @@ export class TreeOfThought {
     this.config = this.mergeConfig(DEFAULT_CONFIG, config);
 
     this.generator = new TreeGenerator(this.config.generator);
-    this.simpleSearch = new SimpleSearch(this.config.search);
+    this.keywordSearch = new SimpleSearch(this.config.search);
     this.parser = new DocumentParser(this.generator);
     this.treeCache = new Map();
 
@@ -104,7 +104,7 @@ export class TreeOfThought {
    */
   setUseLLM(enabled: boolean): void {
     if (enabled && !this.llmSearch) {
-      console.warn('[ToT] LLM provider not configured. Using simple search.');
+      console.warn('[ToT] LLM provider not configured. Using keyword search.');
       return;
     }
     this.useLLM = enabled;
@@ -197,7 +197,7 @@ export class TreeOfThought {
       return this.llmSearch.retrieve(tree, query);
     }
 
-    return this.simpleSearch.retrieve(tree, query);
+    return this.keywordSearch.retrieve(tree, query);
   }
 
   /**
@@ -207,14 +207,14 @@ export class TreeOfThought {
     if (this.useLLM && this.llmSearch) {
       return this.llmSearch.search(tree, query);
     }
-    return this.simpleSearch.search(tree, query);
+    return this.keywordSearch.search(tree, query);
   }
 
   /**
    * Get all text from a tree (for full context scenarios)
    */
   collectAllText(tree: TreeIndex): string {
-    return this.simpleSearch.collectAllText(tree);
+    return this.keywordSearch.collectAllText(tree);
   }
 
   /**

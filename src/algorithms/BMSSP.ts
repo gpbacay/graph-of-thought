@@ -2,6 +2,9 @@
  * BMSSP (Bounded Multi-Source Shortest Path) Algorithm
  * Efficient algorithm for finding shortest paths from multiple sources
  * with bounded search depth for graph-based document indexing
+ * 
+ * Optimized for selective node activation - only activates needed nodes
+ * like a tree or random forest structure within the graph
  */
 
 import { GraphIndex, GraphNode, GraphEdge, PathResult, BMSSPOptions } from '../types';

@@ -205,7 +205,13 @@ export interface GoTConfig {
     autoSwitchThreshold?: number;
     /** Fallback to tree mode for simple documents */
     fallbackToTree?: boolean;
+    /** Enable dynamic tree formation during retrieval */
+    enableDynamicTrees?: boolean;
+    /** Optimize for simple documents */
+    optimizeForSimpleDocs?: boolean;
   };
+  /** Indexing strategy to use */
+  indexingStrategy?: 'graph-only' | 'hybrid' | 'auto-select';
 }
 
 // ============================================================================

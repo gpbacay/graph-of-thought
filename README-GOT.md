@@ -4,8 +4,33 @@
 
 Graph-of-Thought is the evolved version of Tree-of-Thought, implementing advanced graph-based indexing with BMSSP (Bounded Multi-Source Shortest Path) algorithms for intelligent document understanding and retrieval.
 
-[![npm version](https://badge.fury.io/js/graph-of-thought.svg)](https://www.npmjs.com/package/graph-of-thought)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## The Problem GoT Solves
+
+Traditional document retrieval systems suffer from:
+- **Vector Database Dependency**: Expensive infrastructure requirements
+- **Poor Semantic Understanding**: Cannot grasp relationships between document sections
+- **Inefficient Processing**: Analyze entire documents even for simple queries
+- **Setup Complexity**: Require complex configuration with API keys and external services
+
+GoT addresses these by providing **vectorless, intelligent document indexing** that understands document structure natively.
+
+## RAG System Integration
+
+GoT focuses on the **retrieval component** of RAG systems:
+
+```mermaid
+graph LR
+    A[User Query] --> B[GoT Indexing]
+    B --> C[Context Retrieval]
+    C --> D[LLM Generation]
+    D --> E[Response]
+    
+    style B fill:#e3f2fd,stroke:#1976d2
+    style C fill:#e3f2fd,stroke:#1976d2
+```
+
+**GoT handles**: Intelligent document indexing and context retrieval  
+**You provide**: Your preferred LLM for generation
 
 ## Key Features
 
@@ -15,6 +40,80 @@ Graph-of-Thought is the evolved version of Tree-of-Thought, implementing advance
 - **Cross-Reference Understanding**: Recognizes and utilizes relationships between document sections
 - **Zero External Dependencies**: Works completely standalone - no API keys or vector databases required
 - **Backward Compatible**: Includes legacy Tree-of-Thought functionality
+
+## Architecture Overview
+
+### System Flow
+
+```mermaid
+graph TB
+    A[Document Input] --> B{Complexity Analysis}
+    B --> C[Tree Mode - Simple Docs]
+    B --> D[Graph Mode - Complex Docs]
+    C --> E[Hierarchical Indexing]
+    D --> F[Graph-based Indexing]
+    E --> G[BMSSP Algorithm]
+    F --> G
+    G --> H[Selective Node Activation]
+    H --> I[Context Retrieval]
+    I --> J[Formatted Output]
+```
+
+### Core Components
+
+```mermaid
+graph LR
+    A[GraphOfThought] --> B[Document Analysis]
+    A --> C[Graph Construction]
+    A --> D[Path Finding]
+    A --> E[Context Assembly]
+    
+    B --> F[Complexity Scoring]
+    B --> G[Section Detection]
+    C --> H[Node Creation]
+    C --> I[Edge Building]
+    D --> J[BMSSP Search]
+    D --> K[Relevance Ranking]
+    E --> L[Output Formatting]
+    
+    F --> M[Index Selection]
+    G --> H
+    H --> N[Document Graph]
+    I --> N
+    J --> O[Retrieved Paths]
+    K --> O
+    L --> P[Final Context]
+    M --> N
+    N --> O
+    O --> P
+```
+
+### Query Processing Pipeline
+
+```mermaid
+flowchart LR
+    A[Query Input] --> B[Keyword Analysis]
+    B --> C[Seed Node Identification]
+    C --> D[Selective Activation]
+    D --> E[Bounded Traversal]
+    E --> F[Context Assembly]
+    F --> G[Response Output]
+    
+    subgraph "Indexing Phase"
+        H[Document Parsing]
+        I[Structure Analysis]
+        J[Graph/Tree Building]
+        H --> I --> J
+    end
+    
+    subgraph "Query Phase"
+        B
+        C
+        D
+        E
+        F
+    end
+```
 
 ## Installation
 
