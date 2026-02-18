@@ -25,8 +25,8 @@ graph LR
     C --> D[LLM Generation]
     D --> E[Response]
     
-    style B fill:#e3f2fd,stroke:#1976d2
-    style C fill:#e3f2fd,stroke:#1976d2
+    style B fill:#2196f3,color:#ffffff,stroke:#1976d2
+    style C fill:#4caf50,color:#ffffff,stroke:#1976d2
 ```
 
 **GoT handles**: Intelligent document indexing and context retrieval  

@@ -21,11 +21,24 @@ Graph-of-Thought solves these by providing **vectorless, intelligent document in
 
 Graph-of-Thought focuses on the **retrieval component** of RAG systems:
 
-```
-[User Query] → [GoT Index] → [Relevant Context] → [LLM Generation] → [Response]
-     ↓              ↓              ↓                   ↓              ↓
-  "How do I..."   Document    "Installation,      "Based on the    "To install,
-                  Structure    Configuration"      context..."      run npm install"
+```mermaid
+graph LR
+    A[User Query] --> B[GoT Index]
+    B --> C[Relevant Context]
+    C --> D[LLM Generation]
+    D --> E[Response]
+    
+    A -->|"How do I..."| A1(( ))
+    B -->|Document Structure| B1(( ))
+    C -->|"Installation, Configuration"| C1(( ))
+    D -->|"Based on the context..."| D1(( ))
+    E -->|"To install, run npm install"| E1(( ))
+    
+    style A fill:#2196f3,color:#ffffff
+    style B fill:#4caf50,color:#ffffff
+    style C fill:#ff9800,color:#000000
+    style D fill:#9c27b0,color:#ffffff
+    style E fill:#f44336,color:#ffffff
 ```
 
 GoT replaces traditional vector-based retrieval with intelligent graph/tree traversal, providing better context with zero external dependencies.
@@ -340,8 +353,8 @@ graph LR
     D --> E[Tree-like Traversal]
     E --> F[Context Assembly]
     
-    style D fill:#e1f5fe
-    style E fill:#e8f5e8
+    style D fill:#2196f3,color:#ffffff
+    style E fill:#4caf50,color:#ffffff
 ```
 
 **Key Benefits:**
